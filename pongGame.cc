@@ -9,7 +9,7 @@ const sf::Time pongGame::TimePerFrame = sf::seconds(1.f / 60.f);
 const unsigned pongGame::MaxScore;
 
 pongGame::pongGame()
- : mPlayerLeft(true, 0), mPlayerRight(false, pongGame::Height),
+ : mPlayerLeft(Side::LEFT_PADDLE), mPlayerRight(Side::RIGHT_PADDLE),
    mPlayState(playState::SERVE_PLAYER_RIGHT),
    playerRightScore(0), playerLeftScore(0)
 {}

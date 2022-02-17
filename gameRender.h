@@ -9,6 +9,7 @@
 class paddle;
 class ball;
 
+// continuing render the game
 class gameRender
 {
 private:
@@ -16,7 +17,6 @@ private:
     //std::unique_ptr<sf::RenderTarget> window;
     sf::RenderTarget& window;
     sf::Font mFont;
-    //todo: font or something.
 public:
     static gameRender& getInstance(sf::RenderTarget&, const sf::Font&);
     void render(const ball& Ball,

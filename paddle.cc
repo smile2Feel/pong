@@ -3,28 +3,29 @@
 
 const float paddle::speed = 100.f;
 
-paddle::paddle(bool isLeftPaddle, float yPos)
-: leftPaddle(isLeftPaddle), mRect(sf::Vector2f(pongGame::Width / 40, pongGame::Height / 7))
+paddle::paddle(Side s)
+: side(s), mRect(sf::Vector2f(pongGame::Width / 40, pongGame::Height / 7))
 {
-    mRect.setPosition((leftPaddle ? 0 : pongGame::Width * 39 / 40), yPos);
+    mRect.setPosition(((side == Side::LEFT_PADDLE) ? pongGame::Width * 1 / 40 : pongGame::Width * 38 / 40),
+                        ((side == Side::LEFT_PADDLE) ? 0 : pongGame::Height * 6 / 7));
     mRect.setFillColor(sf::Color::Blue);
 }
 
 void paddle::setPosition(float y)
 {
-    float x = (leftPaddle ? 0 : mRect.getPosition().x);
+    float x = ((side == Side::LEFT_PADDLE) ? 0 : mRect.getPosition().x);
     mRect.setPosition(sf::Vector2f(x, y));
 }
 
-float paddle::getPosition(void) const
+const sf::Vector2f& paddle::getPosition(void) const
 {
-    return mRect.getPosition().y;
+    return mRect.getPosition();
 }
 
 void paddle::update(const sf::Time& interval)
 {
-    float pos = getPosition();
-    if (leftPaddle)
+    float pos = getPosition().y;
+    if (side == Side::LEFT_PADDLE)
     {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
             pos -= speed * interval.asSeconds();
@@ -69,4 +70,9 @@ float paddle::getPaddleHeight(void) const
 float paddle::getPaddleWidth(void) const
 {
     return mRect.getSize().x;
+}
+
+const Side& paddle::whichSide(void) const
+{
+    return side;
 }

@@ -22,10 +22,12 @@ void gameRender::render(const ball& Ball,
 {
     window.clear();
 
+    // render the ball and two paddles
     window.draw(Ball.getDrawableCircle());
     window.draw(playerLeft.getDrawableRect());
     window.draw(playerRight.getDrawableRect());
 
+    // render the score text
     sf::Text score(std::to_string(playerLeftScore) + "   " + std::to_string(playerRightScore), mFont, 40);
     sf::FloatRect bounds = score.getLocalBounds();
     score.setPosition({pongGame::Width/2-bounds.width/2, 0});

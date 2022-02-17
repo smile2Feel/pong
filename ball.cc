@@ -17,32 +17,39 @@ ballState ball::update(const sf::Time interval, const paddle& pad)
     pos += velocity * interval.asSeconds();
     entity.setPosition(pos);
     
-    // overpass the boarder
+    // get the paddle and ball position
     float radius = entity.getRadius();
     float padWidth = pad.getPaddleWidth();
+    float padHeight = pad.getPaddleHeight();
+    const sf::Vector2f& padPos = pad.getPosition();
 
     bState = ballState::NORMAL_MOVING_OR_STATIC;
-    if (pos.x < padWidth || pos.x > (pongGame::Width - radius * 2 - padWidth))
+
+    // if ball and paddle collided, reset the speed, direction, ball position
+    if (collide(pad))
     {
-        if (collide(pad))
-        {
-            float newPosX = ((pos.x < padWidth) ? padWidth : (pongGame::Width - radius * 2 - padWidth));
-            setPosition({newPosX, pos.y});
-            setVelocity({-velocity.x * BallIncrPace, velocity.y * BallIncrPace});
-            bState = ballState::HIT_LEFT_RIGHT_BOUNDS;
-        } else {
-            // reset the ball.
-            setPosition({pongGame::Width / 2 - radius, pongGame::Height / 2 - radius});
-            setVelocity({0, 0});
-            bState = ballState::OUT_LEFT_RIGHT_BOUNDS;
-        }
+        // reset the ball position, we don't want the ball embedded into the paddle
+        float newPosX = ((pad.whichSide() == Side::LEFT_PADDLE) ? (padPos.x + padWidth): (padPos.x- radius * 2));
+        setPosition({newPosX, pos.y});
+        setVelocity({-velocity.x * BallIncrPace, velocity.y * BallIncrPace});
+        bState = ballState::HIT_LEFT_RIGHT_BOUNDS;
     }
+
+    // if ball hits the up or down wall, bounce back
     if (pos.y < 0 || pos.y > (pongGame::Height - radius * 2))
     {
         float newPosY = (pos.y < 0 ? 0 : (pongGame::Height - radius * 2));
         setPosition({pos.x, newPosY});
         setVelocity({velocity.x, -velocity.y});
         bState = ballState::HIT_UP_DOWN_BOUNDS;
+    }
+
+    // if ball are out of the left or right wall, reset the gameStatus and so on
+    if ((pos.x + 2 * radius) < 0 || pos.x > pongGame::Width) 
+    {
+        setPosition({pongGame::Width / 2 - radius, pongGame::Height / 2 - radius});
+        setVelocity({0, 0});
+        bState = ballState::OUT_LEFT_RIGHT_BOUNDS;
     }
     return bState;
 }
